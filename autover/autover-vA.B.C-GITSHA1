@@ -1,0 +1,24 @@
+#!/bin/sh
+#
+# Update $2 using $1 as a template.  Relace all occurences of $$
+# in $1 with the output of 'git describe' referred to the last v*
+# tag in git.  String is modified so that it appears in the format:
+#
+# vA.B.C-GITSHA1
+#
+if [ $# -eq 2 ]
+then
+
+	# 1) Print $1 to Pipe
+	# 2) Replace $$ with output of:
+	#	a) git describe --match='v*' --abbrev=8 --long --always
+	#	b) Where -g has been replaced by a -
+	#	c) and the first - in the line has been replaced by a .
+
+cat $1 | sed "s/\\$\\$/`git describe --match='v*' --abbrev=8 --long --always 2>/dev/null | sed \"s/-g/-/\" | sed \"s/-/./\"`/" >$2
+
+else
+
+echo "USAGE: $0 <Template File> <Target File>"
+
+fi

@@ -1,0 +1,16 @@
+Git versioning scripts.  Automatically generate part or all of a version string for a project.
+
+autover/autover-GITSHA1
+=======================
+
+USAGE: autover-GITSHA1 <Template> <Target>
+
+Copy <Template> to <Target> while replacing any occurences of $$ in <Template> with the first 8 characters of the current HEAD's commit SHA1.  Needs to be called by post-commit and post-checkout hooks to keep the <Target> file correctly synched.
+
+autover/autover-vA.B.C-GITSHA1
+==============================
+
+USAGE: autover-vA.B.C-GITSHA1 <Template> <Target>
+
+As for the above script, but replace $$ with C-GITSHA1 where C is the number of commits since the last signed or annotated tag matching 'v*' and GITSHA1 is again the first 8 characters of the commit's SHA1.  Typically I use these with tags such as 'v1.0' hence the name of the script.
+

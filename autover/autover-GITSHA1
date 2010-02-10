@@ -1,0 +1,15 @@
+#!/bin/sh
+#
+# Update $2 using $1 as a template.  Relace all occurences of $$
+# in $1 with the first 8 characters of HEAD's SHA1
+#
+if [ $# -eq 2 ]
+then
+
+cat $1 | sed "s/\\$\\$/`git rev-parse --verify HEAD | sed "s/^\\(........\\).*/\\1/"`/" >$2
+
+else
+
+echo "USAGE: $0 <Template File> <Target File>"
+
+fi
