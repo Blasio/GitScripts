@@ -1,0 +1,175 @@
+#!/bin/bash
+#
+# Set up a project's .gitignore file
+#
+# Assumes that it is started in the GitScripts directory and that
+# there is a directory called gitignore-templates in it containing
+# the various template files.  The final ignore file is built by
+# concatenating template files.  Which files are concatenated depends
+# on the answers given to the script.
+
+# Clear .gitignore file before starting
+cat /dev/null > .gitignore
+
+read -p 'Project targets PC (y/n): '
+if [ $REPLY == 'y' ]
+then
+	
+	# Menu entries (labels)
+	optypemenu[0]='Standard Executable'
+	optypemenu[1]='Windows DLL'
+	# Enabled/Disabled
+	optype=( 0 0 )
+	# Template Files
+	optypefiles[0]='Target-PC'
+	optypefiles[1]='Target-PC-DLL'
+	
+	ntypes=${#optypemenu[*]} 
+	eopt=$(( ntypes+1 ))
+
+	echo "Select which output types are produced by this project:"
+	while [ 1 ]
+	do
+
+		# Print list of options to enable/disable.  Add a 'Done' option at the end
+		echo
+		idx=0
+		while [ $idx -lt $ntypes ]
+		do
+			echo -n $(( idx+1 ))
+			echo -n ")" ${optypemenu[($idx)]}
+			if [ "${optype[($idx)]}" = "1" ]
+			then
+				echo ' [Yes]'
+			else
+				echo ' [No]'
+			fi
+			let idx++
+		done
+		echo "$eopt) Done"
+
+		read -p 'Enable/Disable output types: '
+
+		if [ "$REPLY" == "$eopt" ]
+		then
+			break
+		fi
+
+		if [ "$REPLY" -lt "1" ]
+		then
+			echo "Invalid Selection!"
+			continue
+		fi
+
+		if [ "$REPLY" -gt "$ntypes" ]
+		then
+			echo "Invalid Selection!"
+			continue
+		fi
+
+		menuline=${optypemenu[($REPLY)-1]}
+		if [ "${optype[($REPLY-1)]}" = "0" ]
+		then
+			optype[($REPLY-1)]=1
+		else
+			optype[($REPLY-1)]=0
+		fi
+	done
+
+	idx=0
+	while [ $idx -lt $ntypes ]
+	do
+		if [ "${optype[($idx)]}" = "1" ]
+		then
+			cat "./gitignore-templates/${optypefiles[($idx)]}" >> .gitignore
+		fi
+		let idx++
+	done
+
+fi
+
+# Menu entries (labels)
+toolsmenu[0]='ST7 Assembly Toolkit (No STVD)'
+toolsmenu[1]='MS Access (MDB Files)'
+toolsmenu[2]='GCC'
+toolsmenu[3]='Autodesk Inventor'
+toolsmenu[4]='MS Office'
+toolsmenu[5]='Proteus Isis/Ares'
+toolsmenu[6]='STVD'
+toolsmenu[7]='VB6'
+toolsmenu[8]='vIm/gvIm'
+
+# Enabled/Disabled
+tools=( 0 0 0 0 0 0 0 0 1 )
+
+# Template Files
+toolsfiles[0]='Tools-ASMnoSTVD'
+toolsfiles[1]='Tools-Access'
+toolsfiles[2]='Tools-GCC'
+toolsfiles[3]='Tools-Inventor'
+toolsfiles[4]='Tools-MSOffice'
+toolsfiles[5]='Tools-Proteus'
+toolsfiles[6]='Tools-STVD'
+toolsfiles[7]='Tools-VB'
+toolsfiles[8]='Tools-gvIm'
+
+ntools=${#toolsmenu[*]} 
+eopt=$(( ntools+1 ))
+
+echo "Select which tools will be used in this project:"
+while [ 1 ]
+do
+	# Print list of options to enable/disable.  Add a 'Done' option at the end
+	echo
+	idx=0
+	while [ $idx -lt $ntools ]
+	do
+		echo -n $(( idx+1 ))
+		echo -n ")" ${toolsmenu[($idx)]}
+		if [ "${tools[($idx)]}" = "1" ]
+		then
+			echo ' [Yes]'
+		else
+			echo ' [No]'
+		fi
+		let idx++
+	done
+	echo "$eopt) Done"
+
+	read -p 'Enable/Disable tool: '
+
+	if [ "$REPLY" == "$eopt" ]
+	then
+		break
+	fi
+
+	if [ "$REPLY" -lt "1" ]
+	then
+		echo "Invalid Selection!"
+		continue
+	fi
+
+	if [ "$REPLY" -gt "$ntools" ]
+	then
+		echo "Invalid Selection!"
+		continue
+	fi
+
+	menuline=${toolsmenu[($REPLY)-1]}
+	if [ "${tools[($REPLY-1)]}" = "0" ]
+	then
+		tools[($REPLY-1)]=1
+	else
+		tools[($REPLY-1)]=0
+	fi
+done
+
+idx=0
+while [ $idx -lt $ntools ]
+do
+	if [ "${tools[($idx)]}" = "1" ]
+	then
+		cat "./gitignore-templates/${toolsfiles[($idx)]}" >> .gitignore
+	fi
+	let idx++
+done
